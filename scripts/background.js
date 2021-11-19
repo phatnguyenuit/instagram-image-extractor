@@ -7,7 +7,7 @@ function inject() {
     LEFT_NAV: ".coreSpriteLeftChevron",
     RIGHT_NAV: ".coreSpriteRightChevron",
     ARTICLE: "article",
-    IMAGE: "img[srcset]",
+    IMAGE: "img.FFVAD",
   };
 
   function isMatchedUrl(url) {
@@ -81,6 +81,10 @@ function inject() {
 
   if (isMatchedUrl(window.location.href)) {
     inspectImages().then((imageSources) => {
+      if (imageSources.length === 0) {
+        alert("No images found to. Something went wrong!");
+        return;
+      }
       imageSources.forEach((imageSource) => {
         window.open(imageSource, "_blank");
       });
