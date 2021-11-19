@@ -81,8 +81,8 @@ function inject() {
 
   if (isMatchedUrl(window.location.href)) {
     inspectImages().then((imageSources) => {
-      imageSources.forEach((link) => {
-        window.open(link, "_blank");
+      imageSources.forEach((imageSource) => {
+        window.open(imageSource, "_blank");
       });
     });
   }
