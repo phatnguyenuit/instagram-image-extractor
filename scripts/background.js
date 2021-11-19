@@ -14,34 +14,6 @@ function inject() {
     return URL_MATCHES.some((matchRegex) => matchRegex.test(url));
   }
 
-  function extractImageSources(srcset) {
-    const sources = srcset
-      .split(",")
-      .map((srcAndResolution) => srcAndResolution.split(" "))
-      .reduce(
-        (result, [src, resolution]) => ({
-          ...result,
-          [resolution]: src,
-        }),
-        {}
-      );
-
-    return sources;
-  }
-
-  function getHighestResolutionImageSrc(sources) {
-    const resolutions = Object.keys(sources);
-
-    const highestResolution = resolutions.sort((res1, res2) => {
-      const v1 = Number(res1.replace("w", ""));
-      const v2 = Number(res2.replace("w", ""));
-
-      return v2 - v1;
-    })[0];
-
-    return sources[highestResolution];
-  }
-
   async function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -49,9 +21,9 @@ function inject() {
   async function inspectSingleImage() {
     const article = document.querySelector(SELECTORS.ARTICLE);
 
-    const image = article.querySelector(SELECTORS.IMAGE);
+    const imageElement = article.querySelector(SELECTORS.IMAGE);
 
-    return [getHighestResolutionImageSrc(extractImageSources(image.srcset))];
+    return [imageElement.src];
   }
 
   async function resetImageCollectionNavigation() {
@@ -71,20 +43,20 @@ function inject() {
     //   Reset collection navigation first
     await resetImageCollectionNavigation();
 
-    const listOfSourceSets = [];
+    const imageSources = [];
 
     while (document.querySelector(SELECTORS.RIGHT_NAV)) {
       let rightNav = document.querySelector(SELECTORS.RIGHT_NAV);
-      const images = article.querySelectorAll(SELECTORS.IMAGE);
+      const imageElements = article.querySelectorAll(SELECTORS.IMAGE);
 
-      [...images]
-        .map((img) => img.srcset)
-        .forEach((srcset) => {
-          if (listOfSourceSets.includes(srcset)) {
+      [...imageElements]
+        .map((imageElement) => imageElement.src)
+        .forEach((src) => {
+          if (imageSources.includes(src)) {
             return;
           }
 
-          listOfSourceSets.push(srcset);
+          imageSources.push(src);
         });
 
       rightNav.click();
@@ -93,7 +65,7 @@ function inject() {
       rightNav = document.querySelector(SELECTORS.RIGHT_NAV);
     }
 
-    return listOfSourceSets;
+    return imageSources;
   }
 
   async function inspectImages() {
@@ -108,12 +80,8 @@ function inject() {
   }
 
   if (isMatchedUrl(window.location.href)) {
-    inspectImages().then((listOfSourceSets) => {
-      const links = listOfSourceSets
-        .map(extractImageSources)
-        .map(getHighestResolutionImageSrc);
-
-      links.forEach((link) => {
+    inspectImages().then((imageSources) => {
+      imageSources.forEach((link) => {
         window.open(link, "_blank");
       });
     });
