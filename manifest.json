@@ -1,0 +1,30 @@
+{
+  "short_name": "Instagram Image Extractor",
+  "name": "Instagram Image Extractor",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "description": "Simple extension to extract Instagram images.",
+  "action": {
+    "default_title": "Instagram Image Extractor",
+    "default_icon": {
+      "16": "image-extractor-16.png",
+      "32": "image-extractor-32.png",
+      "48": "image-extractor-48.png",
+      "128": "image-extractor-128.png"
+    }
+  },
+  "icons": {
+    "16": "image-extractor-16.png",
+    "32": "image-extractor-32.png",
+    "48": "image-extractor-48.png",
+    "128": "image-extractor-128.png"
+  },
+  "permissions": ["activeTab", "tabs", "scripting"],
+  "host_permissions": ["https://www.instagram.com/"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; font-src 'self' data:; img-src 'self'"
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  }
+}
